@@ -3,6 +3,7 @@ import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls'
 import { OBJLoader } from 'three/examples/jsm/loaders/OBJLoader.js'
 import { MTLLoader } from 'three/examples/jsm/loaders/MTLLoader.js'
 import { createSkyBox } from './skybox'
+import { keyPress, key } from './keyboard'
 
 
 const renderer = new THREE.WebGLRenderer({antialias: true})
@@ -50,7 +51,7 @@ mtlLoader.setPath(modelPath).load(mtlFile, (materials) => {
     objLoader.setPath(modelPath).load(objFile, (object) => {
         model = object
         model.scale.setScalar(.5)
-        model.position.x = .05
+        model.position.x = .01
         model.position.z = .5
         scene.add(model)
         createSkyBox('darknebula', 70).then(sky => {
@@ -60,24 +61,29 @@ mtlLoader.setPath(modelPath).load(mtlFile, (materials) => {
     })
 })
 
+keyPress(window)
 
 function animate(){
     controls.update()
+
+    if(key == 'a'){
+        model.rotation.y -= 0.1
+    }
+
+    if(key == 'd'){
+        model.rotation.y += 0.1
+    }
+
+    if(key == 'w'){
+        model.rotation.x -= 0.1
+    }
+
+    if(key == 's'){
+        model.rotation.x += 0.1
+    }
+
     renderer.render(scene, camera)
     requestAnimationFrame(animate)
 }
 
-window.addEventListener('click', evento => {
-    console.log(evento.clientX)
-})
 
-window.addEventListener('mousemove', e => {
-    if(!e.buttons){
-        let wh = window.innerHeight
-    let ww = window.innerWidth
-    let my = event.clientY
-    let mx = event.clientX
-    if (model) model.rotation.x += (my - wh / 2) / wh / 100
-    if (model) model.rotation.z -= (mx - ww / 2) / ww / 100
-    }
-})
